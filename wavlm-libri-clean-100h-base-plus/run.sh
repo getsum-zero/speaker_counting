@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+python -m torch.distributed.launch \
+ 	--nproc_per_node 8 run_speech_recognition_ctc.py \
+	--dataset_name="librispeech_asr" \
+	--model_name_or_path="microsoft/wavlm-base-plus" \
+	--dataset_config_name="clean" \
+	--train_split_name="train.100" \
+	--eval_split_name="validation" \
+	--output_dir="./wavlm-libri-clean-100h-base-plus" \
+	--preprocessing_num_workers="16" \
+	--length_column_name="input_length" \
+	--overwrite_output_dir \
+	--num_train_epochs="3" \
+	--per_device_train_batch_size="4" \
+	--per_device_eval_batch_size="4" \
+	--gradient_accumulation_steps="1" \
+	--learning_rate="3e-4" \
+	--warmup_steps="500" \
+	--evaluation_strategy="steps" \
+	--text_column_name="text" \
+	--save_steps="500" \
+	--eval_steps="300" \
+	--logging_steps="1" \
+	--layerdrop="0.0" \
+	--save_total_limit="3" \
+	--freeze_feature_extractor \
+	--gradient_checkpointing \
+	--chars_to_ignore , ? . ! - \; \: \" “ % ‘ ” \
+	--fp16 \
+	--group_by_length \
+	--do_train --do_eval
